@@ -12,6 +12,7 @@ import {
 import { loadSarueRig, planScenes, type PlanOptions } from './director.js';
 import { synthesize, DEFAULT_PIPER_PROFILE, type VoiceProfile } from './voice.js';
 import { compileTimeline, generateSrt } from './timeline.js';
+import { renderVideo, inspectVideoWithFfprobe } from './render.js';
 
 export type ProjectStatus =
   | 'draft'
@@ -325,3 +326,97 @@ export async function executeProjectJob(
     resumedFromStep: resumedFromStep === 'none' ? 'none' : 'voice',
   };
 }
+
+/**
+ * Lista todos os projetos salvos em storage/projects ordenados por data decrescente
+ */
+export function listProjects(baseDir = process.cwd()): ProjectMeta[] {
+  const projectsDir = path.join(baseDir, 'storage', 'projects');
+  if (!fs.existsSync(projectsDir)) {
+    return [];
+  }
+  const entries = fs.readdirSync(projectsDir, { withFileTypes: true });
+  const list: ProjectMeta[] = [];
+  for (const entry of entries) {
+    if (entry.isDirectory()) {
+      const metaPath = path.join(projectsDir, entry.name, 'meta.json');
+      if (fs.existsSync(metaPath)) {
+        try {
+          const meta = JSON.parse(fs.readFileSync(metaPath, 'utf-8')) as ProjectMeta;
+          list.push(meta);
+        } catch {
+          // ignora projetos com meta corrompido
+        }
+      }
+    }
+  }
+  return list.sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1));
+}
+
+/**
+ * Aprova a revisão atual do projeto para exportação final
+ */
+export function approveProjectRevision(projectId: string, baseDir = process.cwd()): ProjectMeta {
+  const projectDir = getProjectDir(projectId, baseDir);
+  const metaPath = path.join(projectDir, 'meta.json');
+  if (!fs.existsSync(metaPath)) {
+    throw new Error(`Projeto '${projectId}' não encontrado.`);
+  }
+
+  const meta = JSON.parse(fs.readFileSync(metaPath, 'utf-8')) as ProjectMeta;
+  meta.status = 'completed';
+  meta.updatedAt = new Date().toISOString();
+  fs.writeFileSync(metaPath, JSON.stringify(meta, null, 2), 'utf-8');
+
+  return meta;
+}
+
+/**
+ * Renderiza o vídeo final do projeto com Remotion e mux de áudio AAC estéreo
+ */
+export async function renderProjectVideo(
+  projectId: string,
+  baseDir = process.cwd()
+): Promise<{ filePath: string; durationSeconds: number; frameCount: number }> {
+  const project = getProject(projectId, baseDir);
+  if (!project.timelines || project.timelines.length === 0) {
+    throw new Error('Projeto não possui timelines compiladas para renderização.');
+  }
+
+  const projectDir = getProjectDir(projectId, baseDir);
+  const rawVideoPath = path.join(projectDir, 'output', 'raw.mp4');
+  const finalVideoPath = path.join(projectDir, 'output', 'final.mp4');
+  const masterAudioPath = path.join(projectDir, 'audio', 'master_voice.wav');
+
+  await renderVideo({
+    compositionId: 'EpisodeDemo',
+    outputPath: rawVideoPath,
+    inputProps: {
+      scenes: project.timelines,
+    },
+    concurrency: 1,
+  });
+
+  if (fs.existsSync(masterAudioPath)) {
+    execFileSync('ffmpeg', [
+      '-y',
+      '-i', rawVideoPath,
+      '-i', masterAudioPath,
+      '-c:v', 'copy',
+      '-c:a', 'aac',
+      '-shortest',
+      finalVideoPath,
+    ]);
+    if (fs.existsSync(rawVideoPath)) fs.unlinkSync(rawVideoPath);
+  } else {
+    fs.renameSync(rawVideoPath, finalVideoPath);
+  }
+
+  const inspection = inspectVideoWithFfprobe(finalVideoPath);
+  return {
+    filePath: finalVideoPath,
+    durationSeconds: inspection.durationSeconds,
+    frameCount: inspection.frameCount,
+  };
+}
+

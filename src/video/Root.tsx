@@ -2,6 +2,7 @@ import React from 'react';
 import { Composition } from 'remotion';
 import { DiagnosticCard } from './DiagnosticCard';
 import { PilotDemo } from './PilotDemo';
+import { EpisodeDemo } from './EpisodeDemo';
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -31,6 +32,29 @@ export const RemotionRoot: React.FC = () => {
         height={1280}
         defaultProps={{
           audioPath: undefined,
+        }}
+      />
+
+      {/* Composição do Episódio Completo do Saruê (Sprint 5 - 60 a 90 segundos) */}
+      <Composition
+        id="EpisodeDemo"
+        component={EpisodeDemo}
+        durationInFrames={1440}
+        fps={24}
+        width={720}
+        height={1280}
+        calculateMetadata={({ props }) => {
+          if (props && Array.isArray((props as any).scenes) && (props as any).scenes.length > 0) {
+            const total = (props as any).scenes.reduce(
+              (acc: number, s: any) => acc + (s.frameCount || 120),
+              0
+            );
+            return { durationInFrames: Math.max(24, total) };
+          }
+          return { durationInFrames: 1440 };
+        }}
+        defaultProps={{
+          scenes: [],
         }}
       />
     </>

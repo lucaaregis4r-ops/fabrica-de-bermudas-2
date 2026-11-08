@@ -3,6 +3,15 @@ import cors from 'cors';
 import path from 'node:path';
 import { generateDoctorReport } from './doctor.js';
 import { loadServerConfig } from './config.js';
+import {
+  createProject,
+  getProject,
+  listProjects,
+  updateProjectPlan,
+  approveProjectRevision,
+  executeProjectJob,
+  renderProjectVideo,
+} from './jobs.js';
 import type { HealthStatus } from '../shared/contracts.js';
 
 export function createApp() {
@@ -30,6 +39,84 @@ export function createApp() {
   app.get('/api/doctor', (_req, res) => {
     const report = generateDoctorReport();
     res.json(report);
+  });
+
+  // ==========================================
+  // ROTAS DE PROJETOS E ESTÚDIO (Sprint 5)
+  // ==========================================
+
+  // Listar todos os projetos
+  app.get('/api/projects', (_req, res) => {
+    try {
+      const projects = listProjects();
+      res.json(projects);
+    } catch (err) {
+      res.status(500).json({ error: String(err) });
+    }
+  });
+
+  // Criar novo projeto
+  app.post('/api/projects', (req, res) => {
+    try {
+      const { title, scriptText, characterId } = req.body;
+      if (!title || !scriptText) {
+        return res.status(400).json({ error: 'Título e texto do roteiro são obrigatórios.' });
+      }
+      const meta = createProject({ title, scriptText, characterId });
+      res.status(201).json(meta);
+    } catch (err) {
+      res.status(500).json({ error: String(err) });
+    }
+  });
+
+  // Obter detalhes de um projeto
+  app.get('/api/projects/:id', (req, res) => {
+    try {
+      const project = getProject(req.params.id);
+      res.json(project);
+    } catch (err) {
+      res.status(404).json({ error: String(err) });
+    }
+  });
+
+  // Disparar geração (planejamento + voz + timeline)
+  app.post('/api/projects/:id/generate', async (req, res) => {
+    try {
+      const result = await executeProjectJob(req.params.id, req.body);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ error: String(err) });
+    }
+  });
+
+  // Atualizar plano de direção de cena (revisão visual)
+  app.put('/api/projects/:id/plan', (req, res) => {
+    try {
+      updateProjectPlan(req.params.id, req.body);
+      res.json({ status: 'ok', message: 'Plano de cena atualizado com sucesso.' });
+    } catch (err) {
+      res.status(400).json({ error: String(err) });
+    }
+  });
+
+  // Aprovar revisão do projeto
+  app.post('/api/projects/:id/approve', (req, res) => {
+    try {
+      const meta = approveProjectRevision(req.params.id);
+      res.json(meta);
+    } catch (err) {
+      res.status(400).json({ error: String(err) });
+    }
+  });
+
+  // Renderizar vídeo final do projeto
+  app.post('/api/projects/:id/render', async (req, res) => {
+    try {
+      const renderResult = await renderProjectVideo(req.params.id);
+      res.json(renderResult);
+    } catch (err) {
+      res.status(500).json({ error: String(err) });
+    }
   });
 
   return app;

@@ -12,6 +12,7 @@
     "config:link": "tsx scripts/link-legacy-config.ts",
     "render:diagnostic": "tsx scripts/render-diagnostic.ts",
     "demo:pilot": "tsx scripts/demo-pilot.ts",
+    "demo:episode": "tsx scripts/demo-episode.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },

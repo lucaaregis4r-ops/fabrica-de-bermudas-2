@@ -59,8 +59,8 @@ npm run render:diagnostic
 Arquivo gerado:
 `storage/diagnostics/diagnostic_card.mp4`
 
-#### 6. Renderização do Piloto do Saruê com Voz e Legendas (Sprint 3)
-Sintetiza a narração em português brasileiro com voz neural local Piper, sincroniza a movimentação da boca frame a frame, gera as legendas SRT e renderiza o vídeo completo:
+#### 6. Renderização do Piloto do Saruê com Voz e Legendas (Sprint 3 / 4)
+Sintetiza a narração em português brasileiro com voz neural local Piper, sincroniza a movimentação da boca frame a frame, gera as legendas SRT e renderiza o vídeo do piloto:
 ```bash
 npm run demo:pilot
 ```
@@ -69,15 +69,25 @@ Arquivos gerados:
 - `storage/diagnostics/pilot_demo.srt` (legendas sincronizadas em formato SRT)
 - `storage/diagnostics/pilot_synthesized_voice.wav` (áudio master sintetizado)
 
-### 7. Inicialização do Ambiente de Desenvolvimento
-Inicia concorrentemente a API backend Express em loopback (`http://127.0.0.1:3000`) e a interface React com Vite (`http://localhost:5173`):
+#### 7. Renderização do Episódio Completo do Saruê (Sprint 5)
+Renderiza as 8 cenas completas do roteiro oficial ("Quando foi que descansar virou atraso?"), com planejamento automático do diretor, síntese neural de todas as falas, montagem da trilha mestre e muxing final em 720×1280:
+```bash
+npm run demo:episode
+```
+Arquivos gerados:
+- `storage/diagnostics/episode_demo.mp4` (vídeo vertical 720×1280 a 24 fps, H.264 + AAC)
+- `storage/diagnostics/episode_demo.srt` (arquivo de legendas sincronizado)
+- `storage/diagnostics/episode_master_voice.wav` (áudio contínuo master)
+
+### 8. Inicialização do Ambiente de Desenvolvimento e Estúdio Web
+Inicia concorrentemente a API backend Express em loopback (`http://127.0.0.1:3000`) e a interface React do estúdio com Vite (`http://localhost:5173`):
 ```bash
 npm run dev
 ```
 
-### 8. Testes e Checagem de Tipos
+### 9. Testes e Checagem de Tipos
 ```bash
-npm test          # Executa a suíte de testes com Vitest (22 testes unitários)
+npm test          # Executa a suíte de testes com Vitest (39 testes unitários)
 npm run typecheck # Validação estrita do compilador TypeScript
 ```
 
@@ -148,5 +158,43 @@ Todos os critérios de aceitação do Sprint 4 foram atendidos:
 4. **Piloto em Modo Automático:**
    - `scripts/demo-pilot.ts` planeja e sintetiza automaticamente as cenas sem necessidade de plano manual.
 
-5. **Próximo Passo:**
-   - **Sprint 5:** Estúdio e Short Completo (API Express com endpoints de projetos `/api/projects`, revisão por cena, interface web de estúdio com prévia e exportação do vídeo final completo de 60–90 segundos).
+---
+
+## 🏆 Resultados da Entrega do Sprint 5 (Estúdio e Short Completo)
+
+Todos os critérios de aceitação do Sprint 5 foram atendidos:
+
+1. **API REST Completa de Projetos e Estúdio (`src/server/index.ts`):**
+   - `GET /api/projects`: listagem estruturada de todos os projetos em `storage/projects/`.
+   - `POST /api/projects`: criação atômica de novo projeto a partir de título e roteiro aprovado.
+   - `GET /api/projects/:id`: recuperação completa do estado, metadados, plano, timelines e legendas.
+   - `POST /api/projects/:id/generate`: disparo da esteira de geração (planejamento, síntese de voz e timeline).
+   - `PUT /api/projects/:id/plan`: ajuste localizado de direção e ações por cena com reaproveitamento de áudio.
+   - `POST /api/projects/:id/approve`: aprovação formal da revisão exibida.
+   - `POST /api/projects/:id/render`: renderização do vídeo final vertical 9:16 com Remotion.
+
+2. **Remotion Composition Sequencial de Episódio ([`src/video/EpisodeDemo.tsx`](file:///home/lucasregis/%C3%81rea%20de%20trabalho/Projetos/Backup/Fabrica%20de%20bermudas%202.0/src/video/EpisodeDemo.tsx)):**
+   - Composição `EpisodeDemo` registrada em [`src/video/Root.tsx`](file:///home/lucasregis/%C3%81rea%20de%20trabalho/Projetos/Backup/Fabrica%20de%20bermudas%202.0/src/video/Root.tsx).
+   - Encadeamento contínuo das 8 cenas utilizando `<Sequence>` do Remotion com cálculo dinâmico de duração total via `calculateMetadata`.
+   - Preservação rigorosa das margens editoriais (40 px laterais, 167 px topo, 233 px base) e legendas sincronizadas.
+
+3. **Demonstração do Episódio Oficial de 8 Cenas (`npm run demo:episode`):**
+   - Execução do roteiro oficial *"Quando foi que descansar virou atraso?"* ([`tests/fixtures/episode.txt`](file:///home/lucasregis/%C3%81rea%20de%20trabalho/Projetos/Backup/Fabrica%20de%20bermudas%202.0/tests/fixtures/episode.txt)).
+   - Planejamento automático pelo diretor com variação expressiva de gestos (`tired`, `look_desk`, `pick_up_phone`, `show_prop`, `point`, `store_phone`, `relax`).
+   - Síntese neural de voz em português brasileiro para as 8 cenas via Piper.
+   - Exportação completa em `storage/diagnostics/episode_demo.mp4` e `storage/diagnostics/episode_demo.srt`.
+
+4. **Interface Web do Estúdio de Criação ([`src/web/App.tsx`](file:///home/lucasregis/%C3%81rea%20de%20trabalho/Projetos/Backup/Fabrica%20de%20bermudas%202.0/src/web/App.tsx)):**
+   - Editor de roteiro com contagem de cenas por parágrafo.
+   - Painel de revisão por cena com edição de ações visuais.
+   - Player vertical 9:16 com alternância entre episódio completo, piloto e diagnóstico.
+   - Botões de aprovação de revisão e download direto de MP4 e SRT.
+   - Modal interativo do `doctor` com verificação de ferramentas locais.
+
+5. **Métricas de Produção Local no Dell Inspiron 5458 (Linux Mint, 8 GB RAM, HD Mecânico):**
+   - Tempo de Render do Episódio Completo: **101.4 segundos**
+   - Resolução: **720 × 1280 a 24 fps** (Vertical 9:16)
+   - Codec: **H.264 (High) + AAC Estéreo**
+   - Tamanho do Arquivo: **0.96 MB**
+   - Concorrência de Render: **1** (respeitando o limite de RAM de 8 GB)
+   - Suíte de Testes: **39 testes unitários em 9 arquivos com 100% de aprovação no Vitest**.
