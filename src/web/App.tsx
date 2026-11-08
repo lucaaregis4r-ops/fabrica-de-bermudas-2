@@ -363,6 +363,37 @@ export const App: React.FC = () => {
               </span>
             </div>
 
+            <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+              <button
+                onClick={() => setPreviewVideoUrl('/media/diagnostics/pilot_demo.mp4')}
+                style={{
+                  backgroundColor: previewVideoUrl.includes('pilot_demo') ? '#2563eb' : '#334155',
+                  color: '#ffffff',
+                  border: 'none',
+                  padding: '6px 12px',
+                  borderRadius: 6,
+                  fontSize: 12,
+                  fontWeight: 600,
+                }}
+              >
+                🦝 Piloto do Saruê (16s)
+              </button>
+              <button
+                onClick={() => setPreviewVideoUrl('/media/diagnostics/diagnostic_card.mp4')}
+                style={{
+                  backgroundColor: previewVideoUrl.includes('diagnostic_card') ? '#2563eb' : '#334155',
+                  color: '#ffffff',
+                  border: 'none',
+                  padding: '6px 12px',
+                  borderRadius: 6,
+                  fontSize: 12,
+                  fontWeight: 600,
+                }}
+              >
+                🩺 Diagnóstico (2s)
+              </button>
+            </div>
+
             {/* Container do Player 9:16 */}
             <div
               style={{
@@ -377,6 +408,7 @@ export const App: React.FC = () => {
               }}
             >
               <video
+                key={previewVideoUrl}
                 src={previewVideoUrl}
                 controls
                 loop
@@ -388,7 +420,9 @@ export const App: React.FC = () => {
 
             <div style={{ marginTop: 16, textAlign: 'center' }}>
               <div style={{ fontSize: 13, color: '#94a3b8' }}>
-                Cartão de Diagnóstico do Sprint 1 (2.00s / 48 quadros)
+                {previewVideoUrl.includes('pilot_demo')
+                  ? 'Piloto do Saruê - Sprint 2 (16.0s / 384 quadros a 24 fps)'
+                  : 'Cartão de Diagnóstico - Sprint 1 (2.0s / 48 quadros a 24 fps)'}
               </div>
               <div style={{ fontSize: 11, color: '#64748b', marginTop: 4 }}>
                 Inspeção ffprobe: 720×1280 • H.264 • Sem GPU
@@ -406,7 +440,7 @@ export const App: React.FC = () => {
             }}
           >
             <h3 style={{ margin: '0 0 12px 0', fontSize: 16, fontWeight: 700 }}>
-              4. Exportação do Episódio (Sprint 5)
+              4. Exportação do Episódio (Sprint 2 / Sprint 5)
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
               <div style={{ backgroundColor: '#0f172a', padding: 12, borderRadius: 8, fontSize: 13 }}>
@@ -418,20 +452,35 @@ export const App: React.FC = () => {
                 <div style={{ fontWeight: 600, color: '#f8fafc' }}>MP4 (H.264 / AAC) + SRT</div>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 12 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <a
-                href="/media/diagnostics/diagnostic_card.mp4"
-                download="diagnostic_card.mp4"
+                href="/media/diagnostics/pilot_demo.mp4"
+                download="pilot_demo.mp4"
                 style={{
-                  flex: 1,
                   textAlign: 'center',
-                  backgroundColor: '#10b981',
+                  backgroundColor: '#2563eb',
                   color: '#ffffff',
                   textDecoration: 'none',
                   padding: '10px 16px',
                   borderRadius: 6,
                   fontWeight: 600,
                   fontSize: 14,
+                }}
+              >
+                ⬇ Baixar MP4 (Piloto do Saruê 16s)
+              </a>
+              <a
+                href="/media/diagnostics/diagnostic_card.mp4"
+                download="diagnostic_card.mp4"
+                style={{
+                  textAlign: 'center',
+                  backgroundColor: '#334155',
+                  color: '#cbd5e1',
+                  textDecoration: 'none',
+                  padding: '8px 16px',
+                  borderRadius: 6,
+                  fontWeight: 500,
+                  fontSize: 13,
                 }}
               >
                 ⬇ Baixar MP4 (Diagnóstico 2s)

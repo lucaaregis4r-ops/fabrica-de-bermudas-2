@@ -105,12 +105,15 @@ export async function renderVideo(options: RenderOptions = {}): Promise<VideoIns
     webpackOverride: (config) => config,
   });
 
+  const timeoutInMilliseconds = 90000;
+
   // 2. Select Composition
   const composition = await selectComposition({
     serveUrl: bundled,
     id: compositionId,
     inputProps,
     browserExecutable,
+    timeoutInMilliseconds,
   });
 
   // 3. Render MP4
@@ -122,6 +125,7 @@ export async function renderVideo(options: RenderOptions = {}): Promise<VideoIns
     inputProps,
     concurrency,
     browserExecutable,
+    timeoutInMilliseconds,
   });
 
   // 4. Inspecionar com ffprobe

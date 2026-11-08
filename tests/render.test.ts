@@ -25,6 +25,20 @@ describe('Inspeção de Vídeo com ffprobe', () => {
     }
   });
 
+  it('lê metadados e áudio do vídeo do piloto do Saruê de 16 segundos', () => {
+    const pilotVideoPath = path.join(process.cwd(), 'storage', 'diagnostics', 'pilot_demo.mp4');
+    if (fs.existsSync(pilotVideoPath)) {
+      const inspection = inspectVideoWithFfprobe(pilotVideoPath);
+      expect(inspection.width).toBe(720);
+      expect(inspection.height).toBe(1280);
+      expect(inspection.fps).toBe(24);
+      expect(inspection.codec).toBe('h264');
+      expect(inspection.durationSeconds).toBeCloseTo(16.0, 1);
+      expect(inspection.frameCount).toBe(384);
+      expect(inspection.fileSizeBytes).toBeGreaterThan(100000);
+    }
+  });
+
   it('lança erro descritivo quando o arquivo de vídeo não existe', () => {
     const fakePath = path.join(process.cwd(), 'storage', 'inexistente.mp4');
     expect(() => inspectVideoWithFfprobe(fakePath)).toThrow(/não encontrado para inspeção/);

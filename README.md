@@ -59,53 +59,66 @@ npm run render:diagnostic
 Arquivo gerado:
 `storage/diagnostics/diagnostic_card.mp4`
 
-### 6. Inicialização do Ambiente de Desenvolvimento
+### 6. Renderização do Piloto do Saruê (16s - Sprint 2)
+Renderiza as duas cenas de teste do piloto com atuação do Saruê, corte interno de câmera (plano médio para close), celular e cronômetro:
+```bash
+npm run demo:pilot
+```
+Arquivo gerado:
+`storage/diagnostics/pilot_demo.mp4`
+
+### 7. Inicialização do Ambiente de Desenvolvimento
 Inicia concorrentemente a API backend Express em loopback (`http://127.0.0.1:3000`) e a interface React com Vite (`http://localhost:5173`):
 ```bash
 npm run dev
 ```
 
-### 7. Testes e Checagem de Tipos
+### 8. Testes e Checagem de Tipos
 ```bash
-npm test          # Executa a suíte de testes com Vitest
+npm test          # Executa a suíte de testes com Vitest (16 testes)
 npm run typecheck # Validação estrita do compilador TypeScript
 ```
 
 ---
 
-## 📋 Resultados da Entrega do Sprint 1
+## 📋 Resultados da Entrega do Sprint 1 (Fundação & Diagnóstico)
+- [x] Repositório Git, lockfile e `.nvmrc` configurados.
+- [x] API Express em loopback com `GET /api/health` e `GET /api/doctor`.
+- [x] Vínculo e resolução segura de chaves do `config.toml` legado sem vazamento de dados.
+- [x] Cartão de diagnóstico de 2 segundos renderizado e inspecionado via ffprobe (`storage/diagnostics/diagnostic_card.mp4`).
 
-Todos os critérios de aceitação do Sprint 1 foram comprovados:
+---
 
-1. **Repositório Git e npm:**
-   - Pacote `fabrica-de-bermudas-2` criado com lockfile `package-lock.json`.
-   - `.nvmrc` registrado com `22.23.2`.
-   - `.gitignore` protegendo `node_modules`, `dist`, `storage/` e `.env`.
-   - `.env.example` documentando os adaptadores suportados.
+## 🎭 Resultados da Entrega do Sprint 2 (Rig e Piloto Manual do Saruê)
 
-2. **Serviço Express e API de Diagnóstico:**
-   - `GET /api/health` respondendo com status `ok`, versão e uptime.
-   - `GET /api/doctor` retornando o diagnóstico estruturado das ferramentas e configuração.
-   - Vite configurado com proxy para `/api` e `/media`.
+Todos os critérios de aceitação do Sprint 2 foram atendidos:
 
-3. **Diagnóstico e Vínculo de Configuração Legada:**
-   - `npm run config:link` e detecção automática restrita a pastas irmãs.
-   - Resolução segura de chaves em memória no servidor: nenhum valor é exposto no Git, nos logs, no frontend ou no diagnóstico.
-   - 8 testes cobrindo isolamento, precedência de variáveis de ambiente, caminhos com espaços e acentos, e tolerância a falhas.
+1. **Rig Procedural SVG do Saruê:**
+   - Criado em [`src/video/characters/SarueRig.tsx`](file:///home/lucasregis/%C3%81rea%20de%20trabalho/Projetos/Backup/Fabrica%20de%20bermudas%202.0/src/video/characters/SarueRig.tsx) e especificado em [`assets/characters/sarue/rig.json`](file:///home/lucasregis/%C3%81rea%20de%20trabalho/Projetos/Backup/Fabrica%20de%20bermudas%202.0/assets/characters/sarue/rig.json).
+   - Camadas independentes: cauda preênsil animada, tronco, braço esquerdo, cabeça com máscara facial branca e focinho rosado, boca animável, olhos com reflexos, óculos escuros de acetato, sobrancelhas de tufo branco, boné streetwear virado com snapback, e corrente de ouro com medalha.
+   - Poses de repouso com amortecimento suave (`spring` / `sine`) para evitar saltos ou descontinuidades visuais entre ações.
 
-4. **Renderização de Diagnóstico e ffprobe:**
-   - Renderização Remotion funcional em caminho com espaços e acentos:  
-     `/home/lucasregis/Área de trabalho/Projetos/Backup/Fabrica de bermudas 2.0/storage/diagnostics/diagnostic_card.mp4`
-   - Metadados verificados via ffprobe:
-     - Resolução: `720 × 1280` (Vertical 9:16)
-     - Codec de Vídeo: `h264` (H.264)
-     - Taxa de Quadros: `24 fps`
-     - Duração: `2.00 segundos` (48 quadros)
-     - Tamanho: `~164 KB`
-     - Sem dependência de GPU.
+2. **Catálogo de Ações e Objetos de Cena:**
+   - Movimentos registrados e testados: `idle`, `blink`, `raise_brow`, `pick_up_phone`, `put_down_phone`, `show_prop` e `point`.
+   - Objetos estilizados (props):
+     - `phone`: smartphone com tela iluminada e ícones de aplicativos.
+     - `timer`: cronômetro digital exibindo contagem regressiva "10:00" em verde fosforescente.
+     - `desk`: mesa de estúdio urbano com iluminação de borda.
 
-5. **Interface de Usuário:**
-   - Tela com entrada de roteiro, seleção de personagem (Saruê), lista de cenas para revisão e player de prévia vertical integrado.
+3. **Câmeras e Enquadramentos:**
+   - `medium`: plano médio mostrando a mesa, tronco, braços e cauda.
+   - `close`: close-up ampliado no rosto do Saruê para realçar reações e micro-expressões faciais (elevação da sobrancelha).
 
-6. **Bloqueios Identificados:**
-   - Nenhum bloqueio. Todas as ferramentas e dependências estão validadas e prontas para o **Sprint 2 (Rig e Piloto Manual do Saruê)**.
+4. **Piloto Animado de 16 Segundos (`npm run demo:pilot`):**
+   - Composição sequencial em [`src/video/PilotDemo.tsx`](file:///home/lucasregis/%C3%81rea%20de%20trabalho/Projetos/Backup/Fabrica%20de%20bermudas%202.0/src/video/PilotDemo.tsx) com as Cenas 2 e 3 do roteiro piloto ([`tests/fixtures/pilot.txt`](file:///home/lucasregis/%C3%81rea%20de%20trabalho/Projetos/Backup/Fabrica%20de%20bermudas%202.0/tests/fixtures/pilot.txt)):
+     - **Cena 1 (8.5s / 204 quadros):** Troca interna de plano. Saruê em plano médio pega o celular (`pick_up_phone`), corta para close com o celular iluminando o rosto enquanto lê mensagens.
+     - **Cena 2 (7.5s / 180 quadros):** Exibe o cronômetro (`show_prop` com `timer`) e corta para close erguendo a sobrancelha (`raise_brow`) ao perceber a contradição da cobrança.
+   - Áudio de teste acoplado (`storage/diagnostics/pilot_test_audio.aac`).
+   - Métricas no Dell Inspiron 5458 (Linux Mint, 8 GB RAM, HD):
+     - Tempo de render: **88.3 segundos**
+     - Consumo de heap delta: apenas **20.3 MB**
+     - Saída: `720 × 1280` a `24 fps`, codec `H.264`, áudio `AAC`, tamanho de **1.15 MB**.
+   - Quadros-chave extraídos e validados em `storage/diagnostics/frames/`.
+
+5. **Próximo Passo:**
+   - **Sprint 3:** Síntese de voz PT-BR real (Piper/TTS), sincronização labial fonética por energia de áudio, geração de SRT e integração de timeline.

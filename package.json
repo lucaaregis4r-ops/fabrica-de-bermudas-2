@@ -11,6 +11,7 @@
     "doctor": "tsx scripts/doctor.ts",
     "config:link": "tsx scripts/link-legacy-config.ts",
     "render:diagnostic": "tsx scripts/render-diagnostic.ts",
+    "demo:pilot": "tsx scripts/demo-pilot.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },

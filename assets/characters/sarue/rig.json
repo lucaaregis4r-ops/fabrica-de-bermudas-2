@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "characterId": "sarue",
+  "name": "Saruê",
+  "species": "gambá estilizado",
+  "version": "1.0.0",
+  "description": "Gambá urbano estilizado com boné virado, óculos escuros e corrente de ouro",
+  "viewBox": "0 0 800 1000",
+  "layers": [
+    { "id": "tail", "name": "Cauda", "zIndex": 10, "pivot": [400, 780] },
+    { "id": "torso", "name": "Tronco e Peito", "zIndex": 20, "pivot": [400, 600] },
+    { "id": "gold_chain", "name": "Corrente de Ouro", "zIndex": 25, "pivot": [400, 480] },
+    { "id": "left_arm", "name": "Braço Esquerdo", "zIndex": 28, "pivot": [280, 520] },
+    { "id": "head", "name": "Cabeça e Orelhas", "zIndex": 30, "pivot": [400, 420] },
+    { "id": "facial_mask", "name": "Máscara Facial e Focinho", "zIndex": 32, "pivot": [400, 420] },
+    { "id": "mouth", "name": "Boca", "zIndex": 34, "pivot": [400, 460] },
+    { "id": "eyes", "name": "Olhos e Pálpebras", "zIndex": 36, "pivot": [400, 360] },
+    { "id": "sunglasses", "name": "Óculos Escuros", "zIndex": 38, "pivot": [400, 360] },
+    { "id": "brows", "name": "Sobrancelhas", "zIndex": 40, "pivot": [400, 320] },
+    { "id": "cap", "name": "Boné Streetwear", "zIndex": 45, "pivot": [400, 260] },
+    { "id": "right_arm", "name": "Braço Direito e Mão Ativa", "zIndex": 50, "pivot": [520, 520] },
+    { "id": "props", "name": "Objetos de Cena", "zIndex": 60, "pivot": [520, 560] }
+  ],
+  "supportedActions": [
+    "idle",
+    "blink",
+    "raise_brow",
+    "pick_up_phone",
+    "put_down_phone",
+    "show_prop",
+    "point"
+  ],
+  "supportedProps": [
+    "phone",
+    "timer",
+    "desk"
+  ],
+  "cameras": {
+    "medium": {
+      "scale": 1.0,
+      "translateX": 0,
+      "translateY": 40,
+      "showDesk": true
+    },
+    "close": {
+      "scale": 1.85,
+      "translateX": 0,
+      "translateY": 340,
+      "showDesk": false
+    }
+  },
+  "defaultRestPose": {
+    "headAngle": 0,
+    "tailAngle": 0,
+    "leftArmAngle": 0,
+    "rightArmAngle": 0,
+    "browLift": 0,
+    "mouthOpen": 0,
+    "eyeBlink": 0
+  }
+}
