@@ -120,5 +120,33 @@ Todos os critérios de aceitação do Sprint 3 foram atendidos:
    - A timeline de vídeo é automaticamente redimensionada para a duração exata da voz sintetizada.
    - Demonstração do piloto gerada com áudio de 10.13 segundos (243 quadros a 24 fps) e mux de áudio AAC estéreo.
 
+---
+
+## 🎬 Resultados da Entrega do Sprint 4 (Direção Automática & Trabalho Retomável)
+
+Todos os critérios de aceitação do Sprint 4 foram atendidos:
+
+1. **Catálogo de Rig e Cenários Expandido:**
+   - **Novas Ações:** `tired` (expressão de cansaço), `store_phone` (guardar o celular), `relax` (relaxar ombros e respirar) e `look_desk` (olhar para a mesa).
+   - **Novo Prop:** `notebook` (caderno aberto com três marcas simples desenhadas procedurais).
+   - **Novos Cenários (Sets):** `living_room_sofa` (sala aconchegante com sofá estofado) e `sports_court` (detalhe de quadra com demarcações estilizadas).
+   - Cadastrados em [`assets/characters/sarue/rig.json`](file:///home/lucasregis/%C3%81rea%20de%20trabalho/Projetos/Backup/Fabrica%20de%20bermudas%202.0/assets/characters/sarue/rig.json) e renderizados em [`src/video/characters/SarueRig.tsx`](file:///home/lucasregis/%C3%81rea%20de%20trabalho/Projetos/Backup/Fabrica%20de%20bermudas%202.0/src/video/characters/SarueRig.tsx) e [`src/video/Scene.tsx`](file:///home/lucasregis/%C3%81rea%20de%20trabalho/Projetos/Backup/Fabrica%20de%20bermudas%202.0/src/video/Scene.tsx).
+
+2. **Diretor Automático Declarativo ([`src/server/director.ts`](file:///home/lucasregis/%C3%81rea%20de%20trabalho/Projetos/Backup/Fabrica%20de%20bermudas%202.0/src/server/director.ts)):**
+   - Função `planScenes(script, rig, options)` mapeia texto cru diretamente em planos e cortes (shots) validados contra o catálogo do Rig.
+   - Preservação estrita da literalidade do texto aprovado (`startChar` e `endChar`), respeitando acentos e emojis.
+   - Conexão nativa com a API Gemini usando credenciais seguras do `config.toml` legado sem vazamento.
+   - Distinção inequívoca entre credencial ausente (`CONFIG_MISSING`) e autenticação rejeitada (`AUTH_FAILED`).
+   - Até 1 tentativa de reparo automático caso a resposta não atenda ao schema Zod.
+   - Storyboard local determinístico inteligente integrado para execução rápida sem consumo de cota ou sem internet (`provider: 'mock'`).
+
+3. **Esteira de Jobs e Projetos Retomáveis ([`src/server/jobs.ts`](file:///home/lucasregis/%C3%81rea%20de%20trabalho/Projetos/Backup/Fabrica%20de%20bermudas%202.0/src/server/jobs.ts)):**
+   - Persistência estruturada em `storage/projects/<projectId>/` com `meta.json`, `script.txt`, `plan.json`, `timeline.json` e `subtitles.srt`.
+   - **Retomada de Interrupções:** Se interrompido após o planejamento, retoma diretamente na síntese de voz sem refazer o plano.
+   - **Cache de Voz Preservado:** Alterações manuais ou ajustes visuais de gestos reaproveitam o áudio já sintetizado sem re-síntese de voz.
+
+4. **Piloto em Modo Automático:**
+   - `scripts/demo-pilot.ts` planeja e sintetiza automaticamente as cenas sem necessidade de plano manual.
+
 5. **Próximo Passo:**
-   - **Sprint 4:** Direção Automática (LLM/Gemini para planejamento automático de planos a partir do roteiro) e fila de trabalho com persistência de projetos retomáveis.
+   - **Sprint 5:** Estúdio e Short Completo (API Express com endpoints de projetos `/api/projects`, revisão por cena, interface web de estúdio com prévia e exportação do vídeo final completo de 60–90 segundos).

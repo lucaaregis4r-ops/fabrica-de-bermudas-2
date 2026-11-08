@@ -39,6 +39,10 @@ describe('Rig do Saruê e Plano Manual do Piloto (Sprint 2)', () => {
       'put_down_phone',
       'show_prop',
       'point',
+      'tired',
+      'store_phone',
+      'relax',
+      'look_desk',
     ];
     for (const action of expectedActions) {
       expect(rig.supportedActions).toContain(action);
@@ -48,10 +52,17 @@ describe('Rig do Saruê e Plano Manual do Piloto (Sprint 2)', () => {
     expect(rig.supportedProps).toContain('phone');
     expect(rig.supportedProps).toContain('timer');
     expect(rig.supportedProps).toContain('desk');
+    expect(rig.supportedProps).toContain('notebook');
+
+    // Valida cenários
+    expect(rig.supportedSets).toContain('studio');
+    expect(rig.supportedSets).toContain('living_room_sofa');
+    expect(rig.supportedSets).toContain('sports_court');
 
     // Valida enquadramentos de câmera
     expect(rig.cameras.medium).toBeDefined();
     expect(rig.cameras.close).toBeDefined();
+    expect(rig.cameras.wide).toBeDefined();
   });
 
   it('valida timelines das cenas do piloto contra o Schema Zod', () => {

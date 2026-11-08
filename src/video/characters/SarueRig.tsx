@@ -8,9 +8,13 @@ export type SarueAction =
   | 'pick_up_phone'
   | 'put_down_phone'
   | 'show_prop'
-  | 'point';
+  | 'point'
+  | 'tired'
+  | 'store_phone'
+  | 'relax'
+  | 'look_desk';
 
-export type SarueProp = 'none' | 'phone' | 'timer';
+export type SarueProp = 'none' | 'phone' | 'timer' | 'notebook';
 export type CameraPreset = 'medium' | 'close' | 'wide';
 
 export interface SarueRigProps {
@@ -37,10 +41,12 @@ export const SarueRig: React.FC<SarueRigProps> = ({
   const relativeFrame = Math.max(0, frame - actionStartFrame);
 
   // 1. Respiração e oscilações procedurais suaves de repouso (sem saltos)
-  const breath = Math.sin((frame / fps) * Math.PI * 1.5) * 3;
+  const breathRate = action === 'tired' ? 0.9 : 1.5;
+  const breathAmp = action === 'tired' ? 4.5 : 3;
+  const breath = Math.sin((frame / fps) * Math.PI * breathRate) * breathAmp;
   const tailSway = Math.sin((frame / fps) * Math.PI * 1.2) * 8;
 
-  // 2. Sobrancelha (raise_brow)
+  // 2. Sobrancelha (raise_brow ou tired)
   let browLift = 0;
   if (action === 'raise_brow') {
     browLift = spring({
@@ -48,6 +54,8 @@ export const SarueRig: React.FC<SarueRigProps> = ({
       fps,
       config: { damping: 14, stiffness: 120 },
     }) * 16;
+  } else if (action === 'tired') {
+    browLift = -6; // Sobrancelha caída expressando cansaço
   }
 
   // 3. Piscar de olhos (blink) a cada ~3.5s ou quando a ação for 'blink'
@@ -55,7 +63,20 @@ export const SarueRig: React.FC<SarueRigProps> = ({
   const actionBlink = action === 'blink' && relativeFrame >= 0 && relativeFrame <= 8;
   const isBlinking = periodicBlink || actionBlink;
 
-  // 4. Cinemática do braço direito e mão ativa
+  // 4. Cinemática da cabeça e inclinação
+  let headAngle = 0;
+  if (action === 'look_desk') {
+    const lookProgress = spring({
+      frame: relativeFrame,
+      fps,
+      config: { damping: 15, stiffness: 80 },
+    });
+    headAngle = interpolate(lookProgress, [0, 1], [0, 10]); // Inclina a cabeça em direção à mesa
+  } else if (action === 'tired') {
+    headAngle = 5;
+  }
+
+  // 5. Cinemática do braço direito e mão ativa
   let rightArmRotation = 0; // graus em torno do ombro
   let rightHandY = 0;
   let activeProp = prop;
@@ -70,7 +91,7 @@ export const SarueRig: React.FC<SarueRigProps> = ({
     rightArmRotation = interpolate(pickProgress, [0, 1], [0, -32]);
     rightHandY = interpolate(pickProgress, [0, 1], [0, -110]);
     activeProp = 'phone';
-  } else if (action === 'put_down_phone') {
+  } else if (action === 'put_down_phone' || action === 'store_phone') {
     const putProgress = spring({
       frame: relativeFrame,
       fps,
@@ -78,7 +99,7 @@ export const SarueRig: React.FC<SarueRigProps> = ({
     });
     rightArmRotation = interpolate(putProgress, [0, 1], [-32, 0]);
     rightHandY = interpolate(putProgress, [0, 1], [-110, 0]);
-    activeProp = putProgress < 0.8 ? 'phone' : 'none';
+    activeProp = putProgress < 0.7 ? 'phone' : 'none';
   } else if (action === 'show_prop') {
     // Apresenta o objeto (cronômetro ou celular) para frente
     const showProgress = spring({
@@ -96,9 +117,11 @@ export const SarueRig: React.FC<SarueRigProps> = ({
     });
     rightArmRotation = interpolate(pointProgress, [0, 1], [0, -25]);
     rightHandY = interpolate(pointProgress, [0, 1], [0, -70]);
+  } else if (action === 'relax') {
+    rightArmRotation = 4;
   }
 
-  // 5. Configuração da Câmera (Medium, Close, Wide)
+  // 6. Configuração da Câmera (Medium, Close, Wide)
   const isClose = camera === 'close';
   const isWide = camera === 'wide';
   const cameraScale = isClose ? 1.85 : (isWide ? 0.85 : 1.0);
@@ -246,7 +269,7 @@ export const SarueRig: React.FC<SarueRigProps> = ({
         {/* ========================================================
             CAMADA 30: CABEÇA, ORELHAS E FOCINHO
             ======================================================== */}
-        <g transform={`translate(0, ${breath * 0.5})`}>
+        <g transform={`translate(0, ${breath * 0.5}) rotate(${headAngle}, 400, 360)`}>
           {/* Orelha Esquerda */}
           <ellipse cx="290" cy="300" rx="42" ry="46" fill="#1e293b" />
           <ellipse cx="292" cy="300" rx="28" ry="32" fill="#f472b6" />
@@ -472,6 +495,26 @@ export const SarueRig: React.FC<SarueRigProps> = ({
               <g transform="translate(480, 765) rotate(15)">
                 <rect x="0" y="0" width="45" height="80" rx="8" fill="#0f172a" stroke="#475569" strokeWidth="2" />
                 <rect x="4" y="6" width="37" height="68" rx="4" fill="#1e293b" />
+              </g>
+            )}
+
+            {/* Caderno aberto na mesa (notebook) */}
+            {prop === 'notebook' && (
+              <g transform="translate(350, 760) rotate(-3)">
+                {/* Capa e borda do caderno */}
+                <rect x="0" y="0" width="100" height="70" rx="4" fill="#334155" stroke="#1e293b" strokeWidth="2" />
+                {/* Páginas abertas */}
+                <rect x="3" y="3" width="46" height="64" rx="2" fill="#f8fafc" />
+                <rect x="51" y="3" width="46" height="64" rx="2" fill="#f1f5f9" />
+                {/* Espiral central */}
+                <line x1="49" y1="3" x2="49" y2="67" stroke="#94a3b8" strokeWidth="2" strokeDasharray="3 2" />
+                {/* Três marcas simples na página da esquerda */}
+                <line x1="12" y1="20" x2="40" y2="20" stroke="#0284c7" strokeWidth="3" strokeLinecap="round" />
+                <line x1="12" y1="34" x2="40" y2="34" stroke="#0284c7" strokeWidth="3" strokeLinecap="round" />
+                <line x1="12" y1="48" x2="35" y2="48" stroke="#0284c7" strokeWidth="3" strokeLinecap="round" />
+                {/* Marcas na página da direita */}
+                <line x1="58" y1="20" x2="86" y2="20" stroke="#cbd5e1" strokeWidth="2" strokeLinecap="round" />
+                <line x1="58" y1="34" x2="80" y2="34" stroke="#cbd5e1" strokeWidth="2" strokeLinecap="round" />
               </g>
             )}
           </g>

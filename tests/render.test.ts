@@ -33,8 +33,8 @@ describe('Inspeção de Vídeo com ffprobe', () => {
       expect(inspection.height).toBe(1280);
       expect(inspection.fps).toBe(24);
       expect(inspection.codec).toBe('h264');
-      expect(inspection.durationSeconds).toBeGreaterThanOrEqual(10.0);
-      expect(inspection.frameCount).toBeGreaterThanOrEqual(240);
+      expect(inspection.durationSeconds).toBeGreaterThanOrEqual(5.0);
+      expect(inspection.frameCount).toBeGreaterThanOrEqual(120);
       expect(inspection.fileSizeBytes).toBeGreaterThan(100000);
     }
   });

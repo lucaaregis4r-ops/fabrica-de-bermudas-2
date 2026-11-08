@@ -28,12 +28,23 @@
     "pick_up_phone",
     "put_down_phone",
     "show_prop",
-    "point"
+    "point",
+    "tired",
+    "store_phone",
+    "relax",
+    "look_desk"
   ],
   "supportedProps": [
+    "none",
     "phone",
     "timer",
-    "desk"
+    "desk",
+    "notebook"
+  ],
+  "supportedSets": [
+    "studio",
+    "living_room_sofa",
+    "sports_court"
   ],
   "cameras": {
     "medium": {
@@ -47,6 +58,12 @@
       "translateX": 0,
       "translateY": 340,
       "showDesk": false
+    },
+    "wide": {
+      "scale": 0.85,
+      "translateX": 0,
+      "translateY": -20,
+      "showDesk": true
     }
   },
   "defaultRestPose": {

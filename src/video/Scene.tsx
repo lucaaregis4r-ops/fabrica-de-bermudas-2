@@ -39,14 +39,17 @@ export const Scene: React.FC<SceneProps> = ({ timeline, showCaptions = true }) =
       actionStartFrame = start;
       if (actionCue.target === 'phone') activeProp = 'phone';
       if (actionCue.target === 'timer') activeProp = 'timer';
+      if (actionCue.target === 'notebook') activeProp = 'notebook';
       break;
     }
   }
 
-  // Se nenhuma ação específica estiver ativa no momento, mantém prop se já foi pego
+  // Se nenhuma ação específica estiver ativa no momento, mantém prop se configurado no shot
   if (activeAction === 'idle') {
-    if (currentShot && currentShot.actions.some((a) => a.actionId === 'pick_up_phone')) {
+    if (currentShot && currentShot.actions.some((a) => a.actionId === 'pick_up_phone' || a.target === 'phone')) {
       activeProp = 'phone';
+    } else if (currentShot && currentShot.actions.some((a) => a.target === 'notebook')) {
+      activeProp = 'notebook';
     }
   }
 
@@ -71,6 +74,8 @@ export const Scene: React.FC<SceneProps> = ({ timeline, showCaptions = true }) =
     (c) => frame >= c.startFrame && frame <= c.endFrame
   );
 
+  const setId = currentShot?.setId ?? 'studio';
+
   return (
     <div
       style={{
@@ -83,27 +88,75 @@ export const Scene: React.FC<SceneProps> = ({ timeline, showCaptions = true }) =
         flexDirection: 'column',
       }}
     >
-      {/* Cenário de Fundo: Estúdio Urbano com Gradiente e Iluminação de Borda */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'radial-gradient(circle at 50% 35%, #1e293b 0%, #0f172a 60%, #020617 100%)',
-        }}
-      />
-
-      {/* Iluminação de recorte (Rim light no topo) */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: '10%',
-          right: '10%',
-          height: '25%',
-          background: 'radial-gradient(ellipse at 50% 0%, rgba(56, 189, 248, 0.15) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }}
-      />
+      {/* ========================================================
+          CENÁRIOS DE FUNDO
+          ======================================================== */}
+      {setId === 'living_room_sofa' ? (
+        <>
+          {/* Sala com Sofá: Iluminação Quente e Acolhedora */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'radial-gradient(circle at 50% 35%, #291e14 0%, #17110c 60%, #080604 100%)',
+            }}
+          />
+          {/* Encosto e almofadas do sofá ao fundo */}
+          <svg
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
+            viewBox="0 0 720 1280"
+          >
+            {/* Abajur / Luz de cabeceira suave */}
+            <circle cx="620" cy="400" r="160" fill="radial-gradient(circle, rgba(251, 146, 60, 0.25) 0%, transparent 70%)" />
+            {/* Encosto do sofá estofado */}
+            <rect x="60" y="520" width="600" height="240" rx="35" fill="#3b2314" stroke="#52311c" strokeWidth="4" />
+            <rect x="90" y="540" width="250" height="190" rx="20" fill="#452917" />
+            <rect x="380" y="540" width="250" height="190" rx="20" fill="#452917" />
+          </svg>
+        </>
+      ) : setId === 'sports_court' ? (
+        <>
+          {/* Detalhe de Quadra: Piso e Linhas Esportivas */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'radial-gradient(circle at 50% 30%, #064e3b 0%, #022c22 65%, #011510 100%)',
+            }}
+          />
+          {/* Linhas da quadra estilizadas */}
+          <svg
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', opacity: 0.35 }}
+            viewBox="0 0 720 1280"
+          >
+            <circle cx="360" cy="500" r="220" fill="none" stroke="#f8fafc" strokeWidth="6" />
+            <line x1="0" y1="500" x2="720" y2="500" stroke="#f8fafc" strokeWidth="6" />
+            <rect x="240" y="200" width="240" height="300" fill="none" stroke="#f8fafc" strokeWidth="6" />
+          </svg>
+        </>
+      ) : (
+        <>
+          {/* Estúdio Urbano Padrão com Iluminação de Borda */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'radial-gradient(circle at 50% 35%, #1e293b 0%, #0f172a 60%, #020617 100%)',
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: '10%',
+              right: '10%',
+              height: '25%',
+              background: 'radial-gradient(ellipse at 50% 0%, rgba(56, 189, 248, 0.15) 0%, transparent 70%)',
+              pointerEvents: 'none',
+            }}
+          />
+        </>
+      )}
 
       {/* Camada do Personagem Saruê */}
       <div style={{ flex: 1, width: '100%', position: 'relative', zIndex: 10 }}>
