@@ -25,7 +25,7 @@ describe('Inspeção de Vídeo com ffprobe', () => {
     }
   });
 
-  it('lê metadados e áudio do vídeo do piloto do Saruê de 16 segundos', () => {
+  it('lê metadados e áudio do vídeo do piloto do Saruê sincronizado com voz', () => {
     const pilotVideoPath = path.join(process.cwd(), 'storage', 'diagnostics', 'pilot_demo.mp4');
     if (fs.existsSync(pilotVideoPath)) {
       const inspection = inspectVideoWithFfprobe(pilotVideoPath);
@@ -33,8 +33,8 @@ describe('Inspeção de Vídeo com ffprobe', () => {
       expect(inspection.height).toBe(1280);
       expect(inspection.fps).toBe(24);
       expect(inspection.codec).toBe('h264');
-      expect(inspection.durationSeconds).toBeCloseTo(16.0, 1);
-      expect(inspection.frameCount).toBe(384);
+      expect(inspection.durationSeconds).toBeGreaterThanOrEqual(10.0);
+      expect(inspection.frameCount).toBeGreaterThanOrEqual(240);
       expect(inspection.fileSizeBytes).toBeGreaterThan(100000);
     }
   });

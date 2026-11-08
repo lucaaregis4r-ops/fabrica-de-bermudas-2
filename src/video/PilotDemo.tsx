@@ -131,18 +131,24 @@ export const PILOT_SCENE_2_TIMELINE: SceneTimeline = {
 
 export interface PilotDemoProps {
   audioPath?: string;
+  scene1?: SceneTimeline;
+  scene2?: SceneTimeline;
 }
 
-export const PilotDemo: React.FC<PilotDemoProps> = ({ audioPath }) => {
+export const PilotDemo: React.FC<PilotDemoProps> = ({
+  audioPath,
+  scene1 = PILOT_SCENE_1_TIMELINE,
+  scene2 = PILOT_SCENE_2_TIMELINE,
+}) => {
   return (
     <>
       {audioPath && <Audio src={staticFile(audioPath)} />}
       <Series>
-        <Series.Sequence durationInFrames={PILOT_SCENE_1_TIMELINE.frameCount}>
-          <Scene timeline={PILOT_SCENE_1_TIMELINE} />
+        <Series.Sequence durationInFrames={scene1.frameCount}>
+          <Scene timeline={scene1} />
         </Series.Sequence>
-        <Series.Sequence durationInFrames={PILOT_SCENE_2_TIMELINE.frameCount}>
-          <Scene timeline={PILOT_SCENE_2_TIMELINE} />
+        <Series.Sequence durationInFrames={scene2.frameCount}>
+          <Scene timeline={scene2} />
         </Series.Sequence>
       </Series>
     </>

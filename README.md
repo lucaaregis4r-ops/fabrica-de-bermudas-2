@@ -59,13 +59,15 @@ npm run render:diagnostic
 Arquivo gerado:
 `storage/diagnostics/diagnostic_card.mp4`
 
-### 6. Renderização do Piloto do Saruê (16s - Sprint 2)
-Renderiza as duas cenas de teste do piloto com atuação do Saruê, corte interno de câmera (plano médio para close), celular e cronômetro:
+#### 6. Renderização do Piloto do Saruê com Voz e Legendas (Sprint 3)
+Sintetiza a narração em português brasileiro com voz neural local Piper, sincroniza a movimentação da boca frame a frame, gera as legendas SRT e renderiza o vídeo completo:
 ```bash
 npm run demo:pilot
 ```
-Arquivo gerado:
-`storage/diagnostics/pilot_demo.mp4`
+Arquivos gerados:
+- `storage/diagnostics/pilot_demo.mp4` (vídeo vertical 720×1280 a 24 fps)
+- `storage/diagnostics/pilot_demo.srt` (legendas sincronizadas em formato SRT)
+- `storage/diagnostics/pilot_synthesized_voice.wav` (áudio master sintetizado)
 
 ### 7. Inicialização do Ambiente de Desenvolvimento
 Inicia concorrentemente a API backend Express em loopback (`http://127.0.0.1:3000`) e a interface React com Vite (`http://localhost:5173`):
@@ -75,7 +77,7 @@ npm run dev
 
 ### 8. Testes e Checagem de Tipos
 ```bash
-npm test          # Executa a suíte de testes com Vitest (16 testes)
+npm test          # Executa a suíte de testes com Vitest (22 testes unitários)
 npm run typecheck # Validação estrita do compilador TypeScript
 ```
 
@@ -90,35 +92,33 @@ npm run typecheck # Validação estrita do compilador TypeScript
 ---
 
 ## 🎭 Resultados da Entrega do Sprint 2 (Rig e Piloto Manual do Saruê)
+- [x] Rig Procedural SVG do Saruê (`src/video/characters/SarueRig.tsx`) com articulação suave.
+- [x] Catálogo de Ações e Objetos de Cena (`idle`, `blink`, `raise_brow`, `pick_up_phone`, `show_prop`, `timer`, etc.).
+- [x] Enquadramentos de Câmera (`medium` e `close`).
+- [x] Piloto renderizado em 720 × 1280 a 24 fps sem consumo excessivo de memória.
 
-Todos os critérios de aceitação do Sprint 2 foram atendidos:
+---
 
-1. **Rig Procedural SVG do Saruê:**
-   - Criado em [`src/video/characters/SarueRig.tsx`](file:///home/lucasregis/%C3%81rea%20de%20trabalho/Projetos/Backup/Fabrica%20de%20bermudas%202.0/src/video/characters/SarueRig.tsx) e especificado em [`assets/characters/sarue/rig.json`](file:///home/lucasregis/%C3%81rea%20de%20trabalho/Projetos/Backup/Fabrica%20de%20bermudas%202.0/assets/characters/sarue/rig.json).
-   - Camadas independentes: cauda preênsil animada, tronco, braço esquerdo, cabeça com máscara facial branca e focinho rosado, boca animável, olhos com reflexos, óculos escuros de acetato, sobrancelhas de tufo branco, boné streetwear virado com snapback, e corrente de ouro com medalha.
-   - Poses de repouso com amortecimento suave (`spring` / `sine`) para evitar saltos ou descontinuidades visuais entre ações.
+## 🎙️ Resultados da Entrega do Sprint 3 (Voz, Boca e Legendas)
 
-2. **Catálogo de Ações e Objetos de Cena:**
-   - Movimentos registrados e testados: `idle`, `blink`, `raise_brow`, `pick_up_phone`, `put_down_phone`, `show_prop` e `point`.
-   - Objetos estilizados (props):
-     - `phone`: smartphone com tela iluminada e ícones de aplicativos.
-     - `timer`: cronômetro digital exibindo contagem regressiva "10:00" em verde fosforescente.
-     - `desk`: mesa de estúdio urbano com iluminação de borda.
+Todos os critérios de aceitação do Sprint 3 foram atendidos:
 
-3. **Câmeras e Enquadramentos:**
-   - `medium`: plano médio mostrando a mesa, tronco, braços e cauda.
-   - `close`: close-up ampliado no rosto do Saruê para realçar reações e micro-expressões faciais (elevação da sobrancelha).
+1. **Síntese de Voz Neural PT-BR com Piper:**
+   - Modelo neural local `pt_BR-faber-medium.onnx` integrado via `uvx --from piper-tts piper` em [`src/server/voice.ts`](file:///home/lucasregis/%C3%81rea%20de%20trabalho/Projetos/Backup/Fabrica%20de%20bermudas%202.0/src/server/voice.ts).
+   - Execução 100% offline em CPU no hardware Dell sem engasgos ou necessidade de GPU.
+   - Cache de áudio automático indexado por hash SHA-256 do texto para evitar re-síntese de sentenças inalteradas.
 
-4. **Piloto Animado de 16 Segundos (`npm run demo:pilot`):**
-   - Composição sequencial em [`src/video/PilotDemo.tsx`](file:///home/lucasregis/%C3%81rea%20de%20trabalho/Projetos/Backup/Fabrica%20de%20bermudas%202.0/src/video/PilotDemo.tsx) com as Cenas 2 e 3 do roteiro piloto ([`tests/fixtures/pilot.txt`](file:///home/lucasregis/%C3%81rea%20de%20trabalho/Projetos/Backup/Fabrica%20de%20bermudas%202.0/tests/fixtures/pilot.txt)):
-     - **Cena 1 (8.5s / 204 quadros):** Troca interna de plano. Saruê em plano médio pega o celular (`pick_up_phone`), corta para close com o celular iluminando o rosto enquanto lê mensagens.
-     - **Cena 2 (7.5s / 180 quadros):** Exibe o cronômetro (`show_prop` com `timer`) e corta para close erguendo a sobrancelha (`raise_brow`) ao perceber a contradição da cobrança.
-   - Áudio de teste acoplado (`storage/diagnostics/pilot_test_audio.aac`).
-   - Métricas no Dell Inspiron 5458 (Linux Mint, 8 GB RAM, HD):
-     - Tempo de render: **88.3 segundos**
-     - Consumo de heap delta: apenas **20.3 MB**
-     - Saída: `720 × 1280` a `24 fps`, codec `H.264`, áudio `AAC`, tamanho de **1.15 MB**.
-   - Quadros-chave extraídos e validados em `storage/diagnostics/frames/`.
+2. **Dicionário Fonético e Preservação de Texto Canônico:**
+   - Regras de substituição fonética configuráveis (`applyPronunciation`) que enviam fonemas amigáveis ao sintetizador mas mantêm a ortografia correta e canônica nas legendas e tela.
+
+3. **Sincronização Labial (Lip-Sync Procedural):**
+   - Mapeamento determinístico de abertura e fechamento da boca nos quadros de fala ativa (`src/server/timeline.ts`).
+   - Fechamento estrito durante as pausas entre sentenças e cortes.
+
+4. **Legendas SRT e Timeline Integrada:**
+   - Geração automática de arquivo `.srt` padrão com timestamps no formato `HH:MM:SS,mmm` (`generateSrt`).
+   - A timeline de vídeo é automaticamente redimensionada para a duração exata da voz sintetizada.
+   - Demonstração do piloto gerada com áudio de 10.13 segundos (243 quadros a 24 fps) e mux de áudio AAC estéreo.
 
 5. **Próximo Passo:**
-   - **Sprint 3:** Síntese de voz PT-BR real (Piper/TTS), sincronização labial fonética por energia de áudio, geração de SRT e integração de timeline.
+   - **Sprint 4:** Direção Automática (LLM/Gemini para planejamento automático de planos a partir do roteiro) e fila de trabalho com persistência de projetos retomáveis.
