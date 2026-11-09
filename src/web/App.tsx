@@ -43,7 +43,7 @@ export const App: React.FC = () => {
   const [script, setScript] = useState<string>(DEFAULT_SCRIPT);
   const [selectedCharacter] = useState<string>('sarue');
   const [scenes, setScenes] = useState<SceneItem[]>(DEFAULT_SCENES);
-  const [previewVideoUrl, setPreviewVideoUrl] = useState<string>('/media/diagnostics/pilot_demo.mp4');
+  const [previewVideoUrl, setPreviewVideoUrl] = useState<string>('/media/diagnostics/episode_demo.mp4');
   const [showDoctorModal, setShowDoctorModal] = useState<boolean>(false);
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
@@ -194,7 +194,7 @@ export const App: React.FC = () => {
                   display: 'inline-block',
                 }}
               />
-              <span style={{ color: '#94a3b8' }}>Servidor Local 127.0.0.1:3000</span>
+              <span style={{ color: '#94a3b8' }}>Servidor Local 127.0.0.1:3001</span>
             </div>
           ) : (
             <span style={{ fontSize: 12, color: '#f59e0b' }}>● Conectando servidor...</span>

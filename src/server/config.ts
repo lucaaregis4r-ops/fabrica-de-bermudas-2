@@ -315,7 +315,7 @@ export function loadServerConfig(baseDir = process.cwd(), env = process.env): Se
   }
 
   return {
-    port: env.PORT ? parseInt(env.PORT, 10) : 3000,
+    port: env.PORT ? parseInt(env.PORT, 10) : 3001,
     host: env.HOST || '127.0.0.1',
     storageDir,
     projectsDir,

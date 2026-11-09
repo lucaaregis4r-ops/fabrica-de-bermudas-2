@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { generateDoctorReport } from './doctor.js';
 import { loadServerConfig } from './config.js';
 import {
@@ -136,6 +137,11 @@ export function startServer() {
 }
 
 // Se for executado diretamente via CLI/tsx
-if (import.meta.url === `file://${process.argv[1]}`) {
+const isMain = process.argv[1] && (
+  fileURLToPath(import.meta.url) === path.resolve(process.argv[1]) ||
+  process.argv[1].endsWith('src/server/index.ts')
+);
+
+if (isMain) {
   startServer();
 }
